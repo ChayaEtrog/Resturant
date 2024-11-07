@@ -13,16 +13,19 @@ namespace Resturant.Controllers
         OrderLineService orderLineService=new OrderLineService();
         // GET: api/<OrderLine>
         [HttpGet]
-        public IEnumerable<OrderLine> Get()
+        public ActionResult<IEnumerable<OrderLine>> Get()
         {
             return orderLineService.Get();
         }
 
         // GET api/<OrderLine>/5
         [HttpGet("{id}")]
-        public OrderLine Get(int id)
+        public ActionResult Get(int id)
         {
-            return orderLineService.GetById(id);
+            OrderLine orderLine = orderLineService.GetById(id);
+            if(orderLine == null) 
+                return NotFound();
+            return Ok(orderLine);
         }
 
         // POST api/<OrderLine>
@@ -34,16 +37,20 @@ namespace Resturant.Controllers
 
         // PUT api/<OrderLine>/5
         [HttpPut("{id}")]
-        public ActionResult<bool> Put(int id, [FromBody] OrderLine orderLine)
+        public ActionResult Put(int id, [FromBody] OrderLine orderLine)
         {
-            return orderLineService.Update(id, orderLine);
+            if(!orderLineService.Update(id, orderLine))
+                return NotFound();
+            return Ok(true);
         }
 
         // DELETE api/<OrderLine>/5
         [HttpDelete("{id}")]
-        public ActionResult<bool> Delete(int id)
+        public ActionResult Delete(int id)
         {
-            return orderLineService.Delete(id);
+            if (!orderLineService.Delete(id))
+                return NotFound();
+            return Ok(true);
         }
     }
 }

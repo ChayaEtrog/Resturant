@@ -13,16 +13,19 @@ namespace Resturant.Controllers
         DishService dishService=new DishService();
         // GET: api/<Dish>
         [HttpGet]
-        public IEnumerable<Dish> Get()
+        public ActionResult<IEnumerable<Dish>> Get()
         {
             return dishService.Get();
         }
 
         // GET api/<Dish>/5
         [HttpGet("{id}")]
-        public Dish Get(int id)
+        public ActionResult Get(int id)
         {
-            return dishService.GetById(id);
+            Dish dish = dishService.GetById(id);
+            if(dish == null) 
+                return NotFound();
+            return Ok(dish);
         }
 
         // POST api/<Dish>
@@ -34,16 +37,20 @@ namespace Resturant.Controllers
 
         // PUT api/<Dish>/5
         [HttpPut("{id}")]
-        public ActionResult<bool> Put(int id, [FromBody] Dish dish)
+        public ActionResult Put(int id, [FromBody] Dish dish)
         {
-            return dishService.Update(id, dish);
+            if(!dishService.Update(id, dish))
+                return NotFound();
+            return Ok(true);
         }
 
         // DELETE api/<Dish>/5
         [HttpDelete("{id}")]
-        public ActionResult<bool> Delete(int id)
+        public ActionResult Delete(int id)
         {
-            return dishService.Delete(id);
+            if (!dishService.Delete(id))
+                return NotFound();
+            return Ok(true);
         }
     }
 }

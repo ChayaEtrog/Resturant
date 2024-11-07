@@ -5,39 +5,34 @@ namespace Resturant.Services
 {
     public class DishService
     {
-        static List<Dish> dishes = new List<Dish>();
 
         public List<Dish> Get()
         {
-            return dishes;
+            return DataManager.dataContext.dishes;
         }
         public Dish GetById(int id)
         {
-            return dishes.FirstOrDefault(x => x.Id == id);
+            return DataManager.dataContext.dishes.FirstOrDefault(x => x.Id == id);
         }
 
-        public ActionResult<bool> Add(Dish dish)
+        public bool Add(Dish dish)
         {
-            dishes.Add(dish);
+            DataManager.dataContext.dishes.Add(new Dish(dish));
             return true;
         }
 
-        public ActionResult<bool> Update(int id,Dish dish)
+        public bool Update(int id,Dish dish)
         {
-            for (int i = 0; i < dishes.Count; i++)
-            {
-                if (dishes[i].Id == id)
-                {
-                    dishes[i] = dish;
-                    return true;
-                }
-            }
-            return false;
+            int index = DataManager.dataContext.dishes.FindIndex(x => x.Id == id);
+            if (index == -1 )
+                return false;
+            DataManager.dataContext.dishes[index] = new Dish(id, dish);
+            return true;
         }
 
-        public ActionResult<bool> Delete(int id)
+        public bool Delete(int id)
         {
-            return dishes.Remove(dishes.FirstOrDefault(x => x.Id == id));
+            return DataManager.dataContext.dishes.Remove(DataManager.dataContext.dishes.FirstOrDefault(x => x.Id == id));
         }
 
     }

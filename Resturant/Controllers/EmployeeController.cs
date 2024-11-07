@@ -13,16 +13,19 @@ namespace Resturant.Controllers
         EmployeeService employeeService = new EmployeeService();
         // GET: api/<Employee>
         [HttpGet]
-        public IEnumerable<Employee> Get()
+        public ActionResult<IEnumerable<Employee>> Get()
         {
             return employeeService.Get();
         }
 
         // GET api/<Employee>/5
         [HttpGet("{id}")]
-        public Employee Get(string id)
+        public ActionResult Get(int id)
         {
-            return employeeService.GetById(id);
+            Employee employee = employeeService.GetById(id);
+            if(employee == null) 
+                return NotFound();
+            return Ok(employee);
         }
 
         // POST api/<Employee>
@@ -35,16 +38,21 @@ namespace Resturant.Controllers
 
         // PUT api/<Employee>/5
         [HttpPut("{id}")]
-        public ActionResult<bool> Put(string id, [FromBody] Employee employee)
+        public ActionResult Put(int id, [FromBody] Employee employee)
         {
-            return employeeService.Update(id, employee);
+            if(!employeeService.Update(id, employee))
+                return NotFound();
+            return Ok(true);
         }
 
         // DELETE api/<Employee>/5
         [HttpDelete("{id}")]
-        public ActionResult<bool> Delete(string id)
+        public ActionResult Delete(int id)
         {
-            return employeeService.Delete(id);
+
+            if (!employeeService.Delete(id))
+                return NotFound();
+            return Ok(true);
         }
     }
 }

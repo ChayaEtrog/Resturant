@@ -12,16 +12,19 @@ namespace Resturant.Controllers
         CustomerService customerService = new CustomerService();
         // GET: api/<Customers>
         [HttpGet]
-        public IEnumerable<Customer> Get()
+        public ActionResult<IEnumerable<Customer>> Get()
         {
             return customerService.Get();
         }
 
         // GET api/<Customers>/5
         [HttpGet("{id}")]
-        public Customer Get(string id)
+        public ActionResult Get(int id)
         {
-            return customerService.GetById(id);
+            Customer c = customerService.GetById(id);
+            if (c==null)
+                return NotFound();
+            return Ok(customerService.GetById(id));
         }
 
         // POST api/<Customers>
@@ -33,16 +36,20 @@ namespace Resturant.Controllers
 
         // PUT api/<Customers>/5
         [HttpPut("{id}")]
-        public ActionResult<bool> Put(string id, [FromBody] Customer customer)
+        public ActionResult Put(int id, [FromBody] Customer customer)
         {
-            return customerService.Update(id, customer);
+            if(customerService.Update(id, customer)==false)
+                return NotFound();
+            return Ok(true);
         }
 
         // DELETE api/<Customers>/5
         [HttpDelete("{id}")]
-        public ActionResult<bool> Delete(string id)
+        public ActionResult Delete(int id)
         {
-            return customerService.Delete(id);
+            if(customerService.Delete(id)==false) 
+                return NotFound();
+            return Ok(true);
         }
     }
 }

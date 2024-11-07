@@ -13,16 +13,19 @@ namespace Resturant.Controllers
         OrderService orderService=new OrderService();
         // GET: api/<Orders>
         [HttpGet]
-        public IEnumerable<Order> Get()
+        public ActionResult<IEnumerable<Order>> Get()
         {
             return orderService.Get();
         }
 
         // GET api/<Orders>/5
         [HttpGet("{id}")]
-        public Order Get(int id)
+        public ActionResult Get(int id)
         {
-            return orderService.GetById(id);
+            Order order = orderService.GetById(id);
+            if(order == null) 
+                return NotFound();
+            return Ok(order);
         }
 
         // POST api/<Orders>
@@ -34,16 +37,20 @@ namespace Resturant.Controllers
 
         // PUT api/<Orders>/5
         [HttpPut("{id}")]
-        public ActionResult<bool> Put(int id, [FromBody] Order order)
+        public ActionResult Put(int id, [FromBody] Order order)
         {
-            return orderService.Update(id, order);
+            if(!orderService.Update(id, order))
+                return NotFound();
+            return Ok(true);
         }
 
         // DELETE api/<Orders>/5
         [HttpDelete("{id}")]
-        public ActionResult<bool> Delete(int id)
+        public ActionResult Delete(int id)
         {
-            return orderService.Delete(id);
+            if (!orderService.Delete(id))
+                return NotFound();
+            return Ok(true);
         }
     }
 }

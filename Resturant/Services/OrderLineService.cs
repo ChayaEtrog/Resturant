@@ -5,40 +5,35 @@ namespace Resturant.Services
 {
     public class OrderLineService
     {
-        static List<OrderLine> orderLines = new List<OrderLine>();
 
         public List<OrderLine> Get()
         {
-            return orderLines;
+            return DataManager.dataContext.orderLines;
         }
 
         public OrderLine GetById(int id)
         {
-            return orderLines.FirstOrDefault(x => x.OrderId == id);
+            return DataManager.dataContext.orderLines.FirstOrDefault(x => x.OrderId == id);
         }
 
-        public ActionResult<bool> Add(OrderLine orderLine)
+        public bool Add(OrderLine orderLine)
         {
-            orderLines.Add(orderLine);
+            DataManager.dataContext.orderLines.Add(new OrderLine(orderLine));
             return true;
         }
 
-        public ActionResult<bool> Update(int id,OrderLine orderLine)
+        public bool Update(int id,OrderLine orderLine)
         {
-            for (int i = 0; i < orderLines.Count; i++)
-            {
-                if (orderLines[i].OrderId == id)
-                {
-                    orderLines[i] = orderLine;
-                    return true;
-                }
-            }
-            return false;
+            int index = DataManager.dataContext.orderLines.FindIndex(x => x.Id == id);
+            if (index == -1)
+                return false;
+            DataManager.dataContext.orderLines[index] = new OrderLine(id, orderLine);
+            return true;
         }
 
-        public ActionResult<bool> Delete(int id)
+        public bool Delete(int id)
         {
-            return orderLines.Remove(orderLines.FirstOrDefault(x => x.OrderId == id));
+            return DataManager.dataContext.orderLines.Remove(DataManager.dataContext.orderLines.FirstOrDefault(x => x.OrderId == id));
         }
 
     }

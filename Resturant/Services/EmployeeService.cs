@@ -5,39 +5,59 @@ namespace Resturant.Services
 {
     public class EmployeeService
     {
-        static List<Employee> employees = new List<Employee>();
 
         public List<Employee> Get()
         {
-            return employees;
+            return DataManager.dataContext.employees;
         }
-        public Employee GetById(string id)
+        public Employee GetById(int id)
         {
-            return employees.FirstOrDefault(x => x.Id == id);
-        }
-
-        public ActionResult<bool> Add(Employee employee)
-        {
-            employees.Add(employee);
-            return true;
+            return DataManager.dataContext.employees.FirstOrDefault(x => x.Id == id);
         }
 
-        public ActionResult<bool> Update(string id,Employee employee)
+        public bool IsValidTz(string tz)
         {
-            for (int i = 0; i < employees.Count; i++)
+            if (tz.Length != 9)
+                return false;
+            int sum = 0, i = 0, plus;
+            while (i < tz.Length - 1)
             {
-                if (employees[i].Id == id)
-                {
-                    employees[i] = employee;
-                    return true;
-                }
+                if (tz[i] < '0' || tz[i] > '9')
+                    return false;
+                plus = tz[i] - '0';
+                if (i % 2 == 1)
+                    plus *= 2;
+                if (plus > 9)
+                    plus = plus / 10 + plus % 10;
+                sum += plus;
+                i++;
             }
+            sum %= 10;
+            if (10 - sum == tz[tz.Length - 1] - '0')
+                return true;
             return false;
         }
 
-        public ActionResult<bool> Delete(string id)
+        public bool Add(Employee employee)
         {
-            return employees.Remove(employees.FirstOrDefault(x => x.Id == id));
+            if (!IsValidTz(employee.Tz))
+                return false;
+            DataManager.dataContext.employees.Add(new Employee(employee));
+            return true;
+        }
+
+        public bool Update(int id,Employee employee)
+        {
+            int index = DataManager.dataContext.employees.FindIndex(x => x.Id == id);
+            if (index == -1 || !IsValidTz(employee.Tz))
+                return false;
+            DataManager.dataContext.employees[index] = new Employee(id, employee);
+            return true;
+        }
+
+        public bool Delete(int id)
+        {
+            return DataManager.dataContext.employees.Remove(DataManager.dataContext.employees.FirstOrDefault(x => x.Id == id));
         }
     }
 }
