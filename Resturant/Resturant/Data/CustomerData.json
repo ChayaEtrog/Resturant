@@ -1,0 +1,22 @@
+﻿[
+  {
+    "Tz": "327863254",
+    "Name": "chaya",
+    "Email": "c@gmail.com",
+    "Addres": "ashomer 47",
+    "PhonNmumber": "054785452",
+    "IsGlutenFree": true,
+    "IsMemberShip": true,
+    "IsVegetarian": false
+  },
+  {
+    "Tz": "327863254",
+    "Name": "adi",
+    "Email": "a@gmail.com",
+    "Addres": "ashomer 47",
+    "PhonNmumber": "054785452",
+    "IsGlutenFree": true,
+    "IsMemberShip": true,
+    "IsVegetarian": false
+  }
+]

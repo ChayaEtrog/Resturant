@@ -9,36 +9,41 @@ namespace Resturant.Controllers
     [ApiController]
     public class CustomerController : ControllerBase
     {
-        CustomerService customerService = new CustomerService();
+        readonly CustomerService _customerService;
+
+        public CustomerController(CustomerService customerService)
+        {
+            _customerService = customerService;
+        }
         // GET: api/<Customers>
         [HttpGet]
         public ActionResult<IEnumerable<Customer>> Get()
         {
-            return customerService.Get();
+            return _customerService.Get();
         }
 
         // GET api/<Customers>/5
         [HttpGet("{id}")]
         public ActionResult Get(int id)
         {
-            Customer c = customerService.GetById(id);
+            Customer c = _customerService.GetById(id);
             if (c==null)
                 return NotFound();
-            return Ok(customerService.GetById(id));
+            return Ok(_customerService.GetById(id));
         }
 
         // POST api/<Customers>
         [HttpPost]
         public ActionResult<bool> Post([FromBody] Customer customer)
         {
-            return customerService.Add(customer);
+            return _customerService.Add(customer);
         }
 
         // PUT api/<Customers>/5
         [HttpPut("{id}")]
         public ActionResult Put(int id, [FromBody] Customer customer)
         {
-            if(customerService.Update(id, customer)==false)
+            if(_customerService.Update(id, customer)==false)
                 return NotFound();
             return Ok(true);
         }
@@ -47,7 +52,7 @@ namespace Resturant.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
-            if(customerService.Delete(id)==false) 
+            if(_customerService.Delete(id)==false) 
                 return NotFound();
             return Ok(true);
         }

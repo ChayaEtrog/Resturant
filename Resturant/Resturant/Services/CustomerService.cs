@@ -5,15 +5,28 @@ namespace Resturant.Services
 {
     public class CustomerService
     {
-        
+        readonly IDataContext _dataContext;
+
+        public CustomerService(IDataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
+
         public List<Customer> Get()
         {
-            return DataManager.dataContext.customers ;
+            var data = _dataContext.LoadData();
+            if (data == null)
+                return null;
+            return data.ToList();
         }
 
         public Customer GetById(int id)
-        {        
-            return DataManager.dataContext.customers.FirstOrDefault(x => x.Id == id);
+        {
+            var data = _dataContext.LoadData();
+            if (data == null)
+                return null;
+            //return data.Where(c => c.id == id).FirstOrDefault();
+            return data.FirstOrDefault(x => x.Id == id);
         }
 
         public bool IsValidTz(string tz)
@@ -41,9 +54,11 @@ namespace Resturant.Services
 
         public bool Add( Customer customer)
         {
+            var data=_dataContext.LoadData();
             if (IsValidTz(customer.Tz))
             {
-                DataManager.dataContext.customers.Add(new Customer(customer));
+                data.Add(new Customer(customer));
+                _dataContext.SaveData(data);
                 return true;
             }
             return false;
@@ -51,16 +66,24 @@ namespace Resturant.Services
 
         public bool Update(int id,Customer customer)
         {
-            int index = DataManager.dataContext.customers.FindIndex(x => x.Id == id);
+            var data= _dataContext.LoadData();
+            int index = data.FindIndex(x => x.Id == id);
             if (index == -1 || !IsValidTz(customer.Tz))
                 return false;
-            DataManager.dataContext.customers[index] = new Customer(id,customer);
+            data[index] = new Customer(id,customer);
+            _dataContext.SaveData(data);
             return true;
         }
 
         public bool Delete(int id)
         {
-            return DataManager.dataContext.customers.Remove(DataManager.dataContext.customers.FirstOrDefault(x => x.Id == id));
+            var data= _dataContext.LoadData();
+            if (data.Remove(data.FirstOrDefault(x => x.Id == id)))
+            {
+                _dataContext.SaveData(data);
+                return true;
+            }
+            return false;
         }
 
     }
